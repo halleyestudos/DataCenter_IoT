@@ -103,7 +103,11 @@ class DataPipeline:
             "sensor_id": payload.get("sensor_id", "SENSOR-001"),
         }
 
-        self.window = pd.concat([self.window, pd.DataFrame([row])], ignore_index=True)
+        new_row = pd.DataFrame([row])
+        if self.window.empty:
+            self.window = new_row
+        else:
+            self.window = pd.concat([self.window, new_row], ignore_index=True)
         if len(self.window) > WINDOW_SIZE:
             self.window = self.window.iloc[-WINDOW_SIZE:].reset_index(drop=True)
 
